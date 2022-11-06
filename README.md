@@ -112,6 +112,8 @@
         * `php spark db:seed User`
     * To check the table and data inserted successfully
         * Run `php spark db:table TABLENAME` to see the structure and contents of the table    
+    * Update related models/controllers 
+        * Update Auth to include new info
 
 
 

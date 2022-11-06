@@ -35,7 +35,7 @@ class Auth extends BaseController
             ]);
         }
         $user = $this->model
-            ->select(['name','email'])
+            ->select(['name','email','is_admin'])
             ->where("email", $request["email"])
             ->where("password", md5($request["password"]))
             ->first();
