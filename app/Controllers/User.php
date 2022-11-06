@@ -34,13 +34,21 @@ class User extends ResourceController
 
     private function getById($id){
         $user = session('user');
-        return $this->model->find($id);
+        if ($user['is_admin']){
+            return $this->model->find($id);
+        } else {
+            return $this->model->where('is_admin',0)->find($id);
+        }
     }
 
     public function index()
     {
         $user = session('user');
-        return $this->result($this->model->findAll());
+        if ($user['is_admin']){
+            return $this->result($this->model->findAll());
+        } else {
+            return $this->result($this->model->where('is_admin',0)->findAll());
+        }
     }
 
     public function show($id = null){
@@ -49,6 +57,9 @@ class User extends ResourceController
 
     public function create($id = null){
         $user = session('user');
+        if (!$user['is_admin']){
+            return $this->error(["Not allowed to create"],401);
+        }
         $request = $this->request->getJSON(true);
         $rules = [
             'name' => 'required',
@@ -76,6 +87,14 @@ class User extends ResourceController
         }
         $request = $this->request->getJSON(true);
         $user = session('user');
+        if (!$user['is_admin']){
+            if ($item["email"]!=$user["email"]){
+                return $this->error(["Cannot modify other users"]);
+            }
+            if ($request["email"] != $item["email"]){
+                return $this->error(["Cannot modify email"]);
+            }
+        }
         if ($item["password"]!=$request["password"]){
             $request["password"] = md5($request["password"]);
         }
@@ -98,6 +117,9 @@ class User extends ResourceController
 
     public function delete($id = null){
         $user = session('user');
+        if (!$user['is_admin']){
+            return $this->error("Not allowed to delete",401);
+        }
         $item = $this->getById($id);
         if (!$item){
             return $this->error(["Not found"]);

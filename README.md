@@ -124,6 +124,12 @@
         * `POST` `create`: Create one item from request data
         * `PUT` `update/{id}`: Update one item by `id`
         * `DELETE` `delete/{id}`: Delete one item by `id`
+    * Using the session user type (eg: `is_admin`) determine limits to access data
+        * Add additional data filters (`where()`) when the user is not admin
+        * Restrict access to view specific items
+        * Restrict specific operations (eg: `delete`, `create`)
+        * Restrict specific field changes (eg: `email`)
+        * Restrict modifying specific items (eg: other users)
 
 
 
