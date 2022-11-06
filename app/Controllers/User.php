@@ -127,6 +127,9 @@ class User extends ResourceController
         if (!$item){
             return $this->error(["Not found"]);
         }
+        if ($item["email"]==$user["email"]){
+            return $this->error(["Cannot delete yourself"]);
+        }
         $result = $this->model->delete($id);
         return $this->result([
             "id" => $id
