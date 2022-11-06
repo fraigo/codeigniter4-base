@@ -39,4 +39,8 @@ class User extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    function addAllowedFields($fields=[]){
+        $this->allowedFields = array_merge($this->allowedFields,$fields);
+    }
 }

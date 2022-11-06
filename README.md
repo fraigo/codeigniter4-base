@@ -132,7 +132,10 @@
         * Restrict modifying specific items (eg: other users)
     * Restrict fields to be sent
         * Include only fields available to view on `->select([{fields}])` (eg: remove `password`)
-        
+    * Change allowed fields depending on permissions
+        * Modify model to implement `addAllowedFields($fields)` or `setAllowedFields($fields)`
+        * In controller, modify allowed fields depending on user permissions (eg: add `is_admin` field changes only for admin)
+
 
 
 

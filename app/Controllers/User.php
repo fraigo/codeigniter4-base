@@ -59,6 +59,8 @@ class User extends ResourceController
         $user = session('user');
         if (!$user['is_admin']){
             return $this->error(["Not allowed to create"],401);
+        }else{
+            $this->model->addAllowedFields(["is_admin"]);
         }
         $request = $this->request->getJSON(true);
         $rules = [
@@ -76,7 +78,7 @@ class User extends ResourceController
         $result = $this->model->insert($request);
         $last_id = $this->model->getInsertID();
         return $this->result(
-            $this->model->find($last_id),
+            $this->getById($last_id),
             $result?true:false);
     }
 
@@ -94,6 +96,8 @@ class User extends ResourceController
             if ($request["email"] != $item["email"]){
                 return $this->error(["Cannot modify email"]);
             }
+        }else{
+            $this->model->addAllowedFields(["is_admin"]);
         }
         $rules = [
             'name' => 'required',
@@ -105,12 +109,12 @@ class User extends ResourceController
             $errors = $validation->getErrors();
             return $this->error($errors);
         }
-        if (!is_empty(@$request["password"]) && $item["password"]!=$request["password"]){
+        if (!empty(@$request["password"]) && $item["password"]!=$request["password"]){
             $request["password"] = md5($request["password"]);
         }
         $result = $this->model->update($id,$request);
         return $this->result(
-            $this->model->find($id),
+            $this->getById($id),
             $result?true:false);
     }
 
