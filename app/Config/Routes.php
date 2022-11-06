@@ -55,3 +55,6 @@ if (is_file(APPPATH . 'Config/' . ENVIRONMENT . '/Routes.php')) {
 }
 
 $routes->resource('user');
+
+$routes->post('/auth/login','Auth::login');
+$routes->get('/auth/logout','Auth::logout');
