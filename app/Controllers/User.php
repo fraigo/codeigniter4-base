@@ -35,9 +35,9 @@ class User extends ResourceController
     private function getById($id){
         $user = session('user');
         if ($user['is_admin']){
-            return $this->model->find($id);
+            return $this->model->select(["id","name","email","is_admin"])->find($id);
         } else {
-            return $this->model->where('is_admin',0)->find($id);
+            return $this->model->select(["id","name","email","is_admin"])->where('is_admin',0)->find($id);
         }
     }
 
@@ -45,9 +45,9 @@ class User extends ResourceController
     {
         $user = session('user');
         if ($user['is_admin']){
-            return $this->result($this->model->findAll());
+            return $this->result($this->model->select(["id","name","email","is_admin"])->findAll());
         } else {
-            return $this->result($this->model->where('is_admin',0)->findAll());
+            return $this->result($this->model->select(["id","name","email","is_admin"])->where('is_admin',0)->findAll());
         }
     }
 
@@ -95,12 +95,8 @@ class User extends ResourceController
                 return $this->error(["Cannot modify email"]);
             }
         }
-        if ($item["password"]!=$request["password"]){
-            $request["password"] = md5($request["password"]);
-        }
         $rules = [
             'name' => 'required',
-            'password' => 'required',
             'email'    => 'required|valid_email',
         ];
         $validation = \Config\Services::validation();
@@ -108,6 +104,9 @@ class User extends ResourceController
         if (!$validation->run($request)){
             $errors = $validation->getErrors();
             return $this->error($errors);
+        }
+        if (!is_empty(@$request["password"]) && $item["password"]!=$request["password"]){
+            $request["password"] = md5($request["password"]);
         }
         $result = $this->model->update($id,$request);
         return $this->result(

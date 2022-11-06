@@ -130,6 +130,9 @@
         * Restrict specific operations (eg: `delete`, `create`)
         * Restrict specific field changes (eg: `email`)
         * Restrict modifying specific items (eg: other users)
+    * Restrict fields to be sent
+        * Include only fields available to view on `->select([{fields}])` (eg: remove `password`)
+        
 
 
 
