@@ -77,6 +77,25 @@
 * Setup base page in `app/Config/App.php`
     * To remove `index.php` from URL redirects, set `$indexPage` to empty string
         * `public $indexPage = '';`
+* Setup an authentication filter
+    * `php spark make:filter auth`
+    * File `app/Filters/Auth.php` will be created
+    * Edit file on `before` method
+        * Check session variables 
+            * `$session = session()->get();`
+        * Vefify if session login variables exist
+            * `if (!@$session['user']){  }`
+        * If not logged in, redirect to home page (or login page if exists)
+            * `redirect()->to(site_url('')`
+    * Edit `app/Config/Filters.php` to declare the new filter in `$aliases`
+        * `'auth' => \App\Filters\Auth::class,`
+* Setup the filter for a new routing group 
+    * Edit `app/Config/Routes` to secure the User controller using the `auth` filter
+        * `$routes->group('', ['filter' => 'auth'], static function ($routes) {`
+            * `  $routes->resource('user');`
+        * `});`
+* 
+
 
 
 
