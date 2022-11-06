@@ -116,6 +116,15 @@
         * Update Auth Controller to include new info (eg: add `is_admin` to login session data)
 * Setup Model
     * Setup allowed fields to process (for create/update)
+* Implement Controller (ResourceController)
+    * Implement a common JSON result structure (eg: `{"success": {true/false}, "data": [arraydata], "message": "{errormessage}" }`)
+    * Methods:
+        * `GET` `index`: Get all items
+        * `GET` `show/{id}`: Get one item by `id`
+        * `POST` `create`: Create one item from request data
+        * `PUT` `update/{id}`: Update one item by `id`
+        * `DELETE` `delete/{id}`: Delete one item by `id`
+
 
 
 
