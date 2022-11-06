@@ -16,6 +16,24 @@ class Auth extends ResourceController
         if (!$request){
             return $this->response->setStatusCode(401)->setJSON(["success"=>false,"message"=>"Invalid request"]);
         }
+        $rules = [
+            'password' => 'required',
+            'email'    => 'required|valid_email',
+        ];
+        $validation = \Config\Services::validation();
+        $validation->setRules($rules);
+        if (!$validation->run($request)){
+            $message = [];
+            $errors = $validation->getErrors();
+            foreach($errors as $fld=>$err){
+                $message[] = $err;
+            }
+            return $this->response->setStatusCode(401)->setJSON([
+                "success"=>false,
+                "errors"=> $errors,
+                "message"=> implode("\n",$message)
+            ]);
+        }
         $user = $this->model
             ->select(['name','email'])
             ->where("email", $request["email"])
