@@ -1,4 +1,81 @@
-# CodeIgniter 4 Framework
+# CodeIgniter Quick Setup
+
+* Download Codeigniter or create a Codeigniter project
+* Change home main view
+    * Create a new view file `app/Views/home.php`
+        * Include your own HTML code
+    * Modify `app/Controllers/Home.php ` controller to use `home` view
+    * Remove old view `app/Views/welcome_message.php`
+* Setup `.env` file
+    * Copy `env` file to `.env`
+    * Uncomment `CI_ENVIRONMENT = development`
+    * To setup sqlite database, uncomment and set:
+        * `database.default.DBDriver = SQLite3`
+        * `database.default.database = database.sqlite`
+* Create a migration file (to create `user` table)
+    * `php spark make:migration CreateUser`
+    * File `{TIMESTAMP}_CreateUser.php` is created in `app/Database/Migrations/`
+        * Use `$this->forge->addField(["FIELDNAME"=>[FIELDDATA]])` to add fields
+        * Use `$this->forge->addKey('FIELDNAME', true);` to add primary key
+        * User `$this->forge->createTable('TABLENAME');` to create the table
+* Create a seeder file (to fill initial `user` data)
+    * `php spark make:seeder user`
+    * File `{TIMESTAMP}_User.php` is created in `app/Database/Seeds/`
+    * Use `$this->db->table('TABLENAME')->insert($data);` fo insert a key => value data array
+* Run migration
+    * `php spart migrate` (It will run all Migrations in order of timestamp)
+    *  Table `user` will be created in the database
+* Run seeders
+    * `php spark db:seed User` (Run seeder `User.php` to insert user data)
+* Create models
+    * `php spark make:model user`
+    * File `app/Models/User.php` will be created
+    * Modify `$table` to `user` if you use that name instead of default `users`
+* Create controllers
+    * `php spark make:controller user`
+    * File `app/Controllers/User.php` will be created
+    * By default, controllers are created inherited from `app/Controllers/BaseController`
+    * To make the controller RESTful, change inheritance to `ResourceController` 
+        * `use CodeIgniter\RESTful\ResourceController;`
+        * Change `extends BaseController` to `extends ResourceController`
+        * Setup the source $modelName
+            * `protected $modelName = 'App\Models\User';`
+        * Setup the output format (json)
+            * `protected $format    = 'json';`
+        * For the `index` method return `$this->respond($this->model->findAll());`
+* Create routes
+    * Modify `app/Config/Routes.php`
+    * Add a route for the User controller
+        *  Add `$routes->resource('user');` for User controller of type `ResourceController`
+* Create Auth controller (authentication)
+    * Run `php spark make:controller auth`
+    * Modify `app/Controllers/Auth.php` to set a login method
+        * Read json POST data
+        * Check user email + password on database 
+        * If user exists, create session variables, return OK
+        * If user does not exist, return Error
+    * Modify `app/Controllers/Auth.php` to set a logout method
+        * remove session variables
+        * return OK
+    * Create routes for login and logout in `app/Confir/Routes.php`
+        * `$routes->post('/auth/login','Auth::login');`
+        * `$routes->get('/auth/logout','Auth::logout');`
+* Work with form validations
+    * Create validation object 
+        * `$validation = \Config\Services::validation();`
+    * Add validation rules to login method
+        * `$rules = [`
+            `'password' => 'required',`
+            `'email'    => 'required|valid_email',`
+            `];`
+        * `$validation->setRules($rules)`
+    * Perform validation with `$validation->run($request)`
+        * If validation fails, return errors from `validation->getErrors();`
+
+
+
+
+
 
 ## What is CodeIgniter?
 
