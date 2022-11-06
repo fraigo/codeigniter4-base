@@ -1,6 +1,9 @@
 # CodeIgniter Quick Setup
 
 * Download Codeigniter or create a Codeigniter project
+* Start the web service locally
+    * Run `php spark serve` to start a local dev at `http://localhost:8080`
+    * Press `Ctrl+C` to stop the server
 * Change home main view
     * Create a new view file `app/Views/home.php`
         * Include your own HTML code
@@ -71,7 +74,9 @@
         * `$validation->setRules($rules)`
     * Perform validation with `$validation->run($request)`
         * If validation fails, return errors from `validation->getErrors();`
-
+* Setup base page in `app/Config/App.php`
+    * To remove `index.php` from URL redirects, set `$indexPage` to empty string
+        * `public $indexPage = '';`
 
 
 
