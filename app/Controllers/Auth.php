@@ -2,10 +2,10 @@
 
 namespace App\Controllers;
 
-use CodeIgniter\RESTful\ResourceController;
+use App\Controllers\BaseController;
 use App\Models\User;
 
-class Auth extends ResourceController
+class Auth extends BaseController
 {
     public function __construct() {
         $this->model = new User();
@@ -49,13 +49,13 @@ class Auth extends ResourceController
         } else {
             return $this->response->setStatusCode(401)->setJSON(["success"=>false,"message"=>"Authentication Failed"]);
         }
-        return $this->respond(["success"=>$user!=null, "user"=>$user, "apikey"=>$apikey]);
+        return $this->response->setJSON(["success"=>$user!=null, "user"=>$user, "apikey"=>$apikey]);
     }
 
     public function logout() {
         $session = session();
         $session->remove('user');
         $session->remove('apikey');
-        return $this->respond(["success"=>true]);
+        return $this->response->setJSON(["success"=>true]);
     }
 }
