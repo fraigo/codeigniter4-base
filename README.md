@@ -113,7 +113,11 @@
     * To check the table and data inserted successfully
         * Run `php spark db:table TABLENAME` to see the structure and contents of the table    
     * Update related models/controllers 
-        * Update Auth to include new info
+        * Update Auth Controller to include new info (eg: add `is_admin` to login session data)
+* Setup Model
+    * Setup allowed fields to process (for create/update)
+
+
 
 
 
