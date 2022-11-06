@@ -23,6 +23,10 @@ class CreateUser extends Migration
                 'type' => 'VARCHAR',
                 'constraint' => '128',
             ],
+            'is_admin' => [
+                'type' => 'INT',
+                'default' => 0
+            ],
             'password' => [
                 'type' => 'VARCHAR',
                 'constraint' => '32',

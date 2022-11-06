@@ -16,7 +16,8 @@
         * `database.default.DBDriver = SQLite3`
         * `database.default.database = database.sqlite`
 * Create a migration file (to create `user` table)
-    * `php spark make:migration CreateUser`
+    * Use a meaningful name for the migration
+        * `php spark make:migration CreateUser`
     * File `{TIMESTAMP}_CreateUser.php` is created in `app/Database/Migrations/`
         * Use `$this->forge->addField(["FIELDNAME"=>[FIELDDATA]])` to add fields
         * Use `$this->forge->addKey('FIELDNAME', true);` to add primary key
@@ -94,7 +95,24 @@
         * `$routes->group('', ['filter' => 'auth'], static function ($routes) {`
             * `  $routes->resource('user');`
         * `});`
-* 
+* Working with migrations (rebuild schema)
+    * Revert migration changes (or delete the database)
+        * To revert each migration: `php spark migrate:rollback`
+    * Edit the migration file previously created
+        * Example: `app/Database/Migrations/{timestamp}_CreateUser.php`) 
+        * Add new fields (eg: `is_admin`) to `$this->forge->addField()`
+    * Run the migration again:
+        * `php spark migrate`
+    * Edit the seeder to add more info
+        * Example: (eg: `app/Database/Seeds/User.php`)
+        * Include additional data (eg: add `is_admin` value) for new fields created
+        * To start with a clean table 
+            * Include `$this->db->table('{tablename}')->truncate();` at the beginning
+    * Run the seeder again:
+        * `php spark db:seed User`
+    * To check the table and data inserted successfully
+        * Run `php spark db:table TABLENAME` to see the structure and contents of the table    
+
 
 
 
