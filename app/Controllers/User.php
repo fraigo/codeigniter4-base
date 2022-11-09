@@ -109,7 +109,7 @@ class User extends ResourceController
             $errors = $validation->getErrors();
             return $this->error($errors);
         }
-        if (!empty(@$request["password"]) && $item["password"]!=$request["password"]){
+        if (!empty(@$request["password"])){
             $request["password"] = md5($request["password"]);
         }
         $result = $this->model->update($id,$request);
