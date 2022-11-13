@@ -56,6 +56,10 @@ if (is_file(APPPATH . 'Config/' . ENVIRONMENT . '/Routes.php')) {
 
 $routes->group('', ['filter' => 'auth'], static function ($routes) {
     $routes->resource('user');
+    $routes->post('/auth/password','Auth::password');
+    $routes->get('/auth/profile','Auth::me');
+    $routes->get('/auth/me','Auth::me');
+    $routes->post('/auth/profile','Auth::profile');
 });
 
 $routes->post('/auth/login','Auth::login');

@@ -135,6 +135,10 @@
     * Change allowed fields depending on permissions
         * Modify model to implement `addAllowedFields($fields)` or `setAllowedFields($fields)`
         * In controller, modify allowed fields depending on user permissions (eg: add `is_admin` field changes only for admin)
+* Additional Auth methods
+    * Add `POST` `/auth/password` to allow changing password
+    * Add `POST` `/auth/profile` to allow changing profile info
+    * Add `GET` `/auth/profile` to get current profile info
 
 
 

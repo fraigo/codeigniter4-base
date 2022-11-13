@@ -25,8 +25,14 @@ class Auth implements FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        $session = session()->get();
-        if (!@$session['user']){
+        if (!@session('user')){
+            if ($request->isAJAX()){
+                $response = \Config\Services::response();
+                return $response->setStatusCode(401)->setJSON([
+                    "success"=>false,
+                    "message" => "Authentication failed"
+                ]);
+            }
             return redirect()->to(site_url('/'));
         }
     }

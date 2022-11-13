@@ -11,15 +11,7 @@ class Auth extends BaseController
         $this->model = new User();
     }
 
-    public function login() {
-        $request = $this->request->getJSON(true);
-        if (!$request){
-            return $this->response->setStatusCode(401)->setJSON(["success"=>false,"message"=>"Invalid request"]);
-        }
-        $rules = [
-            'password' => 'required',
-            'email'    => 'required|valid_email',
-        ];
+    protected function validateRequest($request, $rules){
         $validation = \Config\Services::validation();
         $validation->setRules($rules);
         if (!$validation->run($request)){
@@ -28,15 +20,49 @@ class Auth extends BaseController
             foreach($errors as $fld=>$err){
                 $message[] = $err;
             }
-            return $this->response->setStatusCode(401)->setJSON([
+            return [
                 "success"=>false,
                 "errors"=> $errors,
+                "requestdata" => $request,
                 "message"=> implode("\n",$message)
-            ]);
+            ];
         }
-        $user = $this->model
+        return null;
+    }
+
+    private function getValues($fields=[]){
+        $request = $this->request->getJSON(true);
+        if ($fields && count($fields)){
+            $values = [];
+            foreach($fields as $fld){
+                $values[$fld] = @$request[$fld];
+            }
+        } else {
+            $values = $request;
+        }
+        return $values;
+    }
+
+    private function getProfileModel($email){
+        return $this->model
             ->select(['name','email','is_admin'])
-            ->where("email", $request["email"])
+            ->where("email", $email);
+    }
+
+    public function login() {
+        $request = $this->getValues();
+        if (!$request){
+            return $this->response->setStatusCode(401)->setJSON(["success"=>false,"message"=>"Invalid request"]);
+        }
+        $rules = [
+            'password' => 'required',
+            'email'    => 'required|valid_email',
+        ];
+        $errors = $this->validateRequest($request,$rules);
+        if ($errors){
+            return $this->response->setStatusCode(401)->setJSON($errors);
+        }
+        $user = $this->getProfileModel($request["email"])
             ->where("password", md5($request["password"]))
             ->first();
         $apikey = null;
@@ -56,6 +82,53 @@ class Auth extends BaseController
         $session = session();
         $session->remove('user');
         $session->remove('apikey');
+        return $this->response->setJSON(["success"=>true]);
+    }
+
+    public function profile(){
+        $request = $this->getValues(['name']);
+        $rules = [
+            'name' => 'required',
+        ];
+        $errors = $this->validateRequest($request,$rules);
+        if ($errors){
+            return $this->response->setStatusCode(401)->setJSON($errors);
+        }
+        $user = $this->getProfileModel(session("user")["email"])
+            ->select(['id','email'])
+            ->first();
+        $this->model->update($user["id"],$request);
+        return $this->response->setJSON(["success"=>true,"user"=>$user]);
+    }
+
+    public function me(){
+        return $this->response->setJSON([
+            "success"=>true,
+            "user"=>$this->getProfileModel(session("user")["email"])->first()
+        ]);
+    }
+
+
+    public function password(){
+        $request = $this->getValues(['password','password1']);
+        $rules = [
+            'password' => 'required',
+            'password1' => [
+                'label'  => 'Repeat password',
+                'rules'  => 'required|matches[password]',
+                'errors' => [
+                ],
+            ],
+        ];
+        $errors = $this->validateRequest($request,$rules);
+        if ($errors){
+            return $this->response->setStatusCode(401)->setJSON($errors);
+        }
+        $user = $this->getProfileModel(session("user")["email"])
+            ->select(['id','email'])
+            ->first();
+        $request["password"] = md5($request["password"]);
+        $this->model->update($user["id"],$request);
         return $this->response->setJSON(["success"=>true]);
     }
 }
