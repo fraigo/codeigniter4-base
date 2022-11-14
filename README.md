@@ -21,6 +21,7 @@
     * File `{TIMESTAMP}_CreateUser.php` is created in `app/Database/Migrations/`
         * Use `$this->forge->addField(["FIELDNAME"=>[FIELDDATA]])` to add fields
         * Use `$this->forge->addKey('FIELDNAME', true);` to add primary key
+        * Use `$this->forge->addUniqueKey([FIELDNAMES]);` to create unique keys
         * User `$this->forge->createTable('TABLENAME');` to create the table
 * Create a seeder file (to fill initial `user` data)
     * `php spark make:seeder user`
