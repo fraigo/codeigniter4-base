@@ -102,10 +102,48 @@ class Auth extends BaseController
     }
 
     public function me(){
+        $user = $this->getProfileModel(session("user")["email"])
+            ->select(['id'])
+            ->first();
+        $optionsModel = model('\App\Models\UserOption');
+        $optionsModel->createOptions($user["id"]);
+        $options = $optionsModel->getUserOptions($user["id"]);
         return $this->response->setJSON([
             "success"=>true,
+            "options"=>$options,
             "user"=>$this->getProfileModel(session("user")["email"])->first()
         ]);
+    }
+
+    public function options(){
+        $user = $this->getProfileModel(session("user")["email"])
+            ->select(['id'])
+            ->first();
+        $request = $this->getValues(['name','type','value']);
+        $rules = [
+            'name' => 'required',
+            'type' => 'required',
+            'value' => [
+                "rules" => 'required',
+                "label" => $request['name'],
+            ],
+        ];
+        $errors = $this->validateRequest($request,$rules);
+        if ($errors){
+            return $this->response->setStatusCode(401)->setJSON($errors);
+        }
+        $optModel = model('\App\Models\UserOption');
+        $opt = $optModel
+            ->select(['id'])
+            ->where('user_id',$user["id"])
+            ->where('name',$request["name"])
+            ->first();
+        if ($opt){
+            $optModel->update($opt["id"],$request);
+            return $this->response->setJSON(["success"=>true,"mode"=>'update']);    
+        } else{
+            return $this->response->setJSON(["success"=>false,"message"=>"Not found"]);
+        }
     }
 
 
