@@ -139,6 +139,12 @@
     * Add `POST` `/auth/password` to allow changing password
     * Add `POST` `/auth/profile` to allow changing profile info
     * Add `GET` `/auth/profile` to get current profile info
+* Create helper functions
+    * Create `{name}_helper.php` in `App/Helpers/` (eg: `map_helper.php`)
+    * Define functions (eg: `mapArrayByKey()`)
+    * Use function in code
+        * Call `helper('{name}');` (eg: `helper('map');`)
+        * Call helper function (eg: `mapArrayByKey(...);`)
 
 
 
