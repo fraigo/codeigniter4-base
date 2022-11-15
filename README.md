@@ -146,6 +146,25 @@
     * Use function in code
         * Call `helper('{name}');` (eg: `helper('map');`)
         * Call helper function (eg: `mapArrayByKey(...);`)
+* Create custom validations
+    * Create a new class file (eg: `app/Config/CustomValidations`)
+    * Add this class reference in `app/Config/Validations`, on `$ruleSets` array:
+        * eg: `\Config\CustomValidations::class,`
+    * Create validator function
+        * Assign a unique name (eg: `unique_fields($value, $params)`)
+        * First parameter is the value of the current field being validated
+        * Second parameter is the parameters of the rule validation (between `[]`)
+        * Return `false` if the validation failed, otherwise return `true`
+    * Use your validation rule in a controller:
+        * `'field' => 'required|unique_fields[table,field1,field2,{field1},{field2}]'`
+        * Values passed between `{}` are converted to field values from validation data
+        * Define a custom message for the rule:
+            * `'field' => [ `
+            * `  'rules' => 'required|unique_fields[table,field1,field2,{field1},{field2}]', `
+            * `  'errors' => [ 'unique_fields' => 'Values must be unique', `
+            * `]`
+    
+
 
 
 
