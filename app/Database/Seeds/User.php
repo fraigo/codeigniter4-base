@@ -9,6 +9,7 @@ class User extends Seeder
     public function run()
     {
         // Clear data
+        $this->db->table('user_option')->truncate();
         $this->db->table('user')->truncate();
 
         $data = [
