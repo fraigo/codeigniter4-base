@@ -18,7 +18,7 @@ class Lists extends Seeder
         ];
         $data["Timezone"] = [
             "America/Vancouver" => "",
-            "America/NewYerk" => "",
+            "America/New_York" => "",
             "America/Santiago" => ""
         ];
         $data["Language"] = [
