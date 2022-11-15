@@ -30,7 +30,7 @@ class BaseResourceController extends ResourceController
             "success" => false,
             "data" => null,
             "errors" => $errors,
-            "message" => implode('\n',$messages)
+            "message" => implode("\n",$messages)
         ]);
     }
 
@@ -41,6 +41,19 @@ class BaseResourceController extends ResourceController
             return $validation->getErrors();
         }
         return null;
+    }
+
+    protected function getValues($fields=[]){
+        $request = $this->request->getJSON(true);
+        if ($fields && count($fields)){
+            $values = [];
+            foreach($fields as $fld){
+                $values[$fld] = @$request[$fld];
+            }
+        } else {
+            $values = $request;
+        }
+        return $values;
     }
 
     protected function getById($id){

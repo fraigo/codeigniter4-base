@@ -55,16 +55,20 @@ if (is_file(APPPATH . 'Config/' . ENVIRONMENT . '/Routes.php')) {
 }
 
 $routes->group('', ['filter' => 'auth'], static function ($routes) {
+    $routes->get('/user/profile/(:num)','User::profile/$1');
+    $routes->put('/user/profile/(:num)','User::updateProfile/$1');
+    $routes->put('/user/password/(:num)','User::password/$1');
+    $routes->post('/user/options/(:num)','User::options/$1');
     $routes->resource('user');
     $routes->resource('userOption');
     $routes->get('/lists/map','Lists::map');
     $routes->get('/lists/byName','Lists::byName');
     $routes->resource('lists');
-    $routes->post('/auth/password','Auth::password');
+    $routes->put('/auth/password','Auth::password');
     $routes->get('/auth/profile','Auth::me');
     $routes->get('/auth/me','Auth::me');
     $routes->post('/auth/options','Auth::options');
-    $routes->post('/auth/profile','Auth::profile');
+    $routes->put('/auth/profile','Auth::profile');
 });
 
 $routes->post('/auth/login','Auth::login');

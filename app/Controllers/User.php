@@ -61,4 +61,92 @@ class User extends BaseResourceController
         return parent::delete($id);
     }
 
+    public function profile($id, $profile=false){
+        if (!$profile && !$this->is_admin()){
+            return $this->error("Not available");
+        }
+        $optionsModel = model('\App\Models\UserOption');
+        $optionsModel->createOptions($id);
+        $options = $optionsModel->getUserOptions($id);
+        return $this->response->setJSON([
+            "success"=>true,
+            "options"=>$options,
+            "user"=>$this->getById($id)
+        ]);
+    }
+
+    public function updateProfile($id, $profile=false){
+        if (!$profile && !$this->is_admin()){
+            return $this->error("Not available");
+        }
+        $request = $this->getValues(['name']);
+        if (!$profile){
+            $request = $this->getValues(['name','is_admin']);
+            $this->addAllowedFields("update");
+        }
+        $rules = [
+            'name' => 'required',
+        ];
+        $errors = $this->validateWithRules($request,$rules);
+        if ($errors){
+            return $this->response->setStatusCode(401)->setJSON($errors);
+        }
+        $this->model->update($id,$request);
+        return $this->response->setJSON(["success"=>true,"data"=>$request]);
+    }
+
+    public function options($id, $profile=false){
+        if (!$profile && !$this->is_admin()){
+            return $this->error("Not available");
+        }
+        $request = $this->getValues(['name','type','value']);
+        $rules = [
+            'name' => 'required',
+            'type' => 'required',
+            'value' => [
+                "rules" => 'required',
+                "label" => $request['name'],
+            ],
+        ];
+        $errors = $this->validateWithRules($request,$rules);
+        if ($errors){
+            return $this->response->setStatusCode(401)->setJSON($errors);
+        }
+        $optModel = model('\App\Models\UserOption');
+        $opt = $optModel
+            ->select(['id'])
+            ->where('user_id',$id)
+            ->where('name',$request["name"])
+            ->first();
+        if ($opt){
+            $optModel->update($opt["id"],$request);
+            return $this->response->setJSON(["success"=>true,"mode"=>'update',"id"=>$opt["id"],"data"=>$request]);    
+        } else{
+            return $this->response->setJSON(["success"=>false,"message"=>"Not found"]);
+        }
+    }
+
+    public function password($id, $profile=false){
+        if (!$profile && !$this->is_admin()){
+            return $this->error("Not available");
+        }
+        $request = $this->getValues(['password','password1']);
+        $rules = [
+            'password' => 'required',
+            'password1' => [
+                'label'  => 'Repeat password',
+                'rules'  => 'required|matches[password]',
+                'errors' => [
+                ],
+            ],
+        ];
+        $errors = $this->validateWithRules($request,$rules);
+        if ($errors){
+            return $this->error($errors);
+        }
+        $request["password"] = md5($request["password"]);
+        $this->model->update($id,$request);
+        return $this->response->setJSON(["success"=>true]);
+    }
+
 }

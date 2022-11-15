@@ -136,6 +136,10 @@
     * Change allowed fields depending on permissions
         * Modify model to implement `addAllowedFields($fields)` or `setAllowedFields($fields)`
         * In controller, modify allowed fields depending on user permissions (eg: add `is_admin` field changes only for admin)
+    * To call another Controller/method
+        * Instantiate the controller class. Eg: `$userController = new \App\Controllers\User();`
+        * Init controller instance: `$userController->initController($this->request, $this->response, $this->logger);`
+        * Call public methods from the external controller. Eg: `$userController->method($params);`
 * Additional Auth methods
     * Add `POST` `/auth/password` to allow changing password
     * Add `POST` `/auth/profile` to allow changing profile info
@@ -163,7 +167,7 @@
             * `  'rules' => 'required|unique_fields[table,field1,field2,{field1},{field2}]', `
             * `  'errors' => [ 'unique_fields' => 'Values must be unique', `
             * `]`
-    
+
 
 
 

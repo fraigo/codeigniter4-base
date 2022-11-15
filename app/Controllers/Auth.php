@@ -86,87 +86,39 @@ class Auth extends BaseController
     }
 
     public function profile(){
-        $request = $this->getValues(['name']);
-        $rules = [
-            'name' => 'required',
-        ];
-        $errors = $this->validateRequest($request,$rules);
-        if ($errors){
-            return $this->response->setStatusCode(401)->setJSON($errors);
-        }
         $user = $this->getProfileModel(session("user")["email"])
-            ->select(['id','email'])
+            ->select(['id'])
             ->first();
-        $this->model->update($user["id"],$request);
-        return $this->response->setJSON(["success"=>true,"user"=>$user]);
+        $userController = new \App\Controllers\User();
+        $userController->initController($this->request, $this->response, $this->logger);
+        return $userController->updateProfile($user["id"], true);
     }
 
     public function me(){
         $user = $this->getProfileModel(session("user")["email"])
             ->select(['id'])
             ->first();
-        $optionsModel = model('\App\Models\UserOption');
-        $optionsModel->createOptions($user["id"]);
-        $options = $optionsModel->getUserOptions($user["id"]);
-        return $this->response->setJSON([
-            "success"=>true,
-            "options"=>$options,
-            "user"=>$this->getProfileModel(session("user")["email"])->first()
-        ]);
+        $userController = new \App\Controllers\User();
+        $userController->initController($this->request, $this->response, $this->logger);
+        return $userController->profile($user["id"], true);
     }
 
     public function options(){
         $user = $this->getProfileModel(session("user")["email"])
             ->select(['id'])
             ->first();
-        $request = $this->getValues(['name','type','value']);
-        $rules = [
-            'name' => 'required',
-            'type' => 'required',
-            'value' => [
-                "rules" => 'required',
-                "label" => $request['name'],
-            ],
-        ];
-        $errors = $this->validateRequest($request,$rules);
-        if ($errors){
-            return $this->response->setStatusCode(401)->setJSON($errors);
-        }
-        $optModel = model('\App\Models\UserOption');
-        $opt = $optModel
-            ->select(['id'])
-            ->where('user_id',$user["id"])
-            ->where('name',$request["name"])
-            ->first();
-        if ($opt){
-            $optModel->update($opt["id"],$request);
-            return $this->response->setJSON(["success"=>true,"mode"=>'update']);    
-        } else{
-            return $this->response->setJSON(["success"=>false,"message"=>"Not found"]);
-        }
+        $userController = new \App\Controllers\User();
+        $userController->initController($this->request, $this->response, $this->logger);
+        return $userController->options($user["id"], true);
     }
 
 
     public function password(){
-        $request = $this->getValues(['password','password1']);
-        $rules = [
-            'password' => 'required',
-            'password1' => [
-                'label'  => 'Repeat password',
-                'rules'  => 'required|matches[password]',
-                'errors' => [
-                ],
-            ],
-        ];
-        $errors = $this->validateRequest($request,$rules);
-        if ($errors){
-            return $this->response->setStatusCode(401)->setJSON($errors);
-        }
         $user = $this->getProfileModel(session("user")["email"])
-            ->select(['id','email'])
+            ->select(['id'])
             ->first();
-        $request["password"] = md5($request["password"]);
-        $this->model->update($user["id"],$request);
-        return $this->response->setJSON(["success"=>true]);
+        $userController = new \App\Controllers\User();
+        $userController->initController($this->request, $this->response, $this->logger);
+        return $userController->password($user["id"], true);
     }
 }
