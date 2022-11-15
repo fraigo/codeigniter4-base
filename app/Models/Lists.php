@@ -4,17 +4,17 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class UserOption extends Model
+class Lists extends Model
 {
     protected $DBGroup          = 'default';
-    protected $table            = 'user_option';
+    protected $table            = 'lists';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $insertID         = 0;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ["user_id", "name", "type", "value"];
+    protected $allowedFields    = ['name','value','label'];
 
     // Dates
     protected $useTimestamps = false;
@@ -39,35 +39,4 @@ class UserOption extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
-
-    public function createOptions($userId){
-        $allOptions = [
-            'Language' => 'select', 
-            'Timezone' => 'select',
-            'Country' => 'select'
-        ];
-        foreach($allOptions as $opt => $type){
-            $data = [
-                "user_id" => $userId,
-                "name" => $opt,
-                "type" => $type,
-                "value" => null
-            ];
-            try{
-                $this->insert($data);
-            } catch(\Exception $e){
-                
-            }
-        }
-    }
-
-    public function getUserOptions($userId){
-        $options = $this
-            ->select(['name','type','value'])
-            ->where('user_id',$userId)
-            ->asArray()->find();
-        helper('map');
-        return mapArrayByKey("name", $options);
-    }
-
 }
