@@ -54,7 +54,10 @@ class User extends BaseResourceController
 
     public function delete($id=null){
         $item = $this->getById($id);
-        $user = session("user");
+        if (!$item){
+            return $this->error(["Not found"],404);
+        }
+        $user = $this->authUser;
         if ($item["email"]==$user["email"]){
             return $this->error(["Cannot delete yourself"]);
         }
@@ -63,7 +66,7 @@ class User extends BaseResourceController
 
     public function profile($id, $profile=false){
         if (!$profile && !$this->is_admin()){
-            return $this->error("Not available");
+            return $this->error("Action not available",401);
         }
         $optionsModel = model('\App\Models\UserOption');
         $optionsModel->createOptions($id);
@@ -77,7 +80,7 @@ class User extends BaseResourceController
 
     public function updateProfile($id, $profile=false){
         if (!$profile && !$this->is_admin()){
-            return $this->error("Not available");
+            return $this->error("Action not available",401);
         }
         $request = $this->getValues(['name']);
         if (!$profile){
@@ -97,7 +100,7 @@ class User extends BaseResourceController
 
     public function options($id, $profile=false){
         if (!$profile && !$this->is_admin()){
-            return $this->error("Not available");
+            return $this->error("Action not available",401);
         }
         $request = $this->getValues(['name','type','value']);
         $rules = [
@@ -128,7 +131,7 @@ class User extends BaseResourceController
 
     public function password($id, $profile=false){
         if (!$profile && !$this->is_admin()){
-            return $this->error("Not available");
+            return $this->error("Action not available",401);
         }
         $request = $this->getValues(['password','password1']);
         $rules = [
