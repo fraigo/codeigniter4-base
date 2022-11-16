@@ -43,10 +43,16 @@ class Auth extends BaseController
         return $values;
     }
 
-    private function getProfileModel($email){
+    public function getProfileModel($apikey=null){
+        $apikey = $apikey?:$this->getApiKey();
         return $this->model
             ->select(['name','email','is_admin'])
-            ->where("email", $email);
+            ->where("apikey", $apikey?:'');
+    }
+
+    private function getApiKey(){
+        $apiKey = @$_GET["APIKEY"]?:(@$_SERVER["HTTP_X_APIKEY"]?:session('apikey'));
+        return $apiKey;
     }
 
     public function login() {
@@ -62,20 +68,28 @@ class Auth extends BaseController
         if ($errors){
             return $this->response->setStatusCode(401)->setJSON($errors);
         }
-        $user = $this->getProfileModel($request["email"])
+        $user = $this->model
+            ->select(['id','apikey'])
+            ->where('email',$request["email"])
             ->where("password", md5($request["password"]))
             ->first();
         $apikey = null;
         $message = null;
         $session = session();
         if ($user){
-            $apikey = md5($request["email"].rand(10000000,99999999));
+            $apikey = $user["apikey"]=='' ? md5($request["email"].rand(10000000,99999999)) : $user["apikey"];
             $session->set('apikey', $apikey);
             $session->set('user', $user);
+            $this->model->addAllowedFields(['last_login','apikey']);
+            $this->model->update($user["id"],[
+                'last_login' => date("Y-m-d H:i:s"),
+                'apikey' => $apikey
+            ]);
+
         } else {
             return $this->response->setStatusCode(401)->setJSON(["success"=>false,"message"=>"Authentication Failed"]);
         }
-        return $this->response->setJSON(["success"=>$user!=null, "user"=>$user, "apikey"=>$apikey]);
+        return $this->response->setJSON(["success"=>$user!=null, "user"=>$this->getProfileModel($apikey)->first(), "apikey"=>$apikey]);
     }
 
     public function logout() {
@@ -86,7 +100,7 @@ class Auth extends BaseController
     }
 
     public function profile(){
-        $user = $this->getProfileModel(session("user")["email"])
+        $user = $this->getProfileModel()
             ->select(['id'])
             ->first();
         $userController = new \App\Controllers\User();
@@ -95,16 +109,19 @@ class Auth extends BaseController
     }
 
     public function me(){
-        $user = $this->getProfileModel(session("user")["email"])
+        $user = $this->getProfileModel()
             ->select(['id'])
             ->first();
+        if (!$user){
+            return $this->response->setStatusCode(401)->setJSON(["success"=>false,"message"=>"Authentication Failed"]);
+        }
         $userController = new \App\Controllers\User();
         $userController->initController($this->request, $this->response, $this->logger);
         return $userController->profile($user["id"], true);
     }
 
     public function options(){
-        $user = $this->getProfileModel(session("user")["email"])
+        $user = $this->getProfileModel()
             ->select(['id'])
             ->first();
         $userController = new \App\Controllers\User();
@@ -114,7 +131,7 @@ class Auth extends BaseController
 
 
     public function password(){
-        $user = $this->getProfileModel(session("user")["email"])
+        $user = $this->getProfileModel()
             ->select(['id'])
             ->first();
         $userController = new \App\Controllers\User();

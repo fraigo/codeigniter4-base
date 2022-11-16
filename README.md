@@ -176,7 +176,19 @@
     * To remove columns
         * `$this->forge->dropColumn('TABLENAME','FIELDNAME');`
     * For the migration `down()` method add the opposite actions to add/drop columns
-
+* Authentication by token (API key)
+    * In `Auth:login`
+        * Get/create the auth token after a successful login
+        * Store the token for the authenticated user
+        * Send token in response
+    * To authenticate API requests
+        * Request login to get user token
+        * Use token in URL parameter (eg: `?apikey=TOKEN`) or http header ('X-Apikey : TOKEN')
+    * Get authenticated user on requests
+        * Use token parameter to get the user by token
+    * Modify Auth filter
+        * Verity authenticated user by token
+    
 
 
 

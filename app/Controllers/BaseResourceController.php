@@ -6,6 +6,13 @@ use CodeIgniter\RESTful\ResourceController;
 
 class BaseResourceController extends ResourceController
 {
+    protected $authUser = null;
+
+    function __construct(){
+        $auth = new Auth();
+        $this->authUser = $auth->getProfileModel()->first();
+    }
+    
     protected function result($data, $success=true){
         return $this->respond([
             "success" => $success,
@@ -14,8 +21,7 @@ class BaseResourceController extends ResourceController
     }
 
     protected function is_admin(){
-        $user = session('user');
-        return $user['is_admin'];
+        return @$this->authUser['is_admin'];
     }
 
     protected function error($errors=[],$code=400){

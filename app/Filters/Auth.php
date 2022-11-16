@@ -25,7 +25,9 @@ class Auth implements FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        if (!@session('user')){
+        $auth = new \App\Controllers\Auth();
+        $user = $auth->getProfileModel()->first();
+        if (!$user){
             if ($request->isAJAX()){
                 $response = \Config\Services::response();
                 return $response->setStatusCode(401)->setJSON([
