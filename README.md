@@ -23,6 +23,8 @@
         * Use `$this->forge->addKey('FIELDNAME', true);` to add primary key
         * Use `$this->forge->addUniqueKey([FIELDNAMES]);` to create unique keys
         * User `$this->forge->createTable('TABLENAME');` to create the table
+    * For the migration `down()` method, add the opposite actions to remove/create fields
+        * Drop table: `$this->forge->dropTable('TABLENAME');`
 * Create a seeder file (to fill initial `user` data)
     * `php spark make:seeder user`
     * File `{TIMESTAMP}_User.php` is created in `app/Database/Seeds/`
@@ -167,6 +169,14 @@
             * `  'rules' => 'required|unique_fields[table,field1,field2,{field1},{field2}]', `
             * `  'errors' => [ 'unique_fields' => 'Values must be unique', `
             * `]`
+* Add migrations to modify tables
+    * Create a migration file (eg: `php spark make:migration CreateUserToken`)
+    * Add columns with field definitions:
+        * `$this->forge->addColumn('TABLENAME', [ 'FIELDNAME' => [{options}] ])`
+    * To remove columns
+        * `$this->forge->dropColumn('TABLENAME','FIELDNAME');`
+    * For the migration `down()` method add the opposite actions to add/drop columns
+
 
 
 
