@@ -12,7 +12,7 @@ class Lists extends BaseResourceController
     protected function actionRules($action){
 
         return [
-            "name" => [
+            "name" => $action=="update" ? 'required' : [
                 "rules" => 'required|unique_fields[lists,name,value,{name},{value}]',
                 'errors' => [
                     'unique_fields' => 'Value already exists for {value}',
