@@ -48,5 +48,10 @@ abstract class BaseController extends Controller
         // Preload any models, libraries, etc, here.
 
         // E.g.: $this->session = \Config\Services::session();
+
+    }
+
+    protected function setJSON($data){
+        return $this->response->setJSON($data);
     }
 }
