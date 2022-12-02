@@ -9,16 +9,17 @@ class Lists extends BaseResourceController
     protected $modelName = 'App\Models\Lists';
     protected $format    = 'json';
 
-    protected function actionRules($action){
+    protected function actionRules($action, $data=null){
 
+        $name = @$data["name"];
         return [
-            "name" => $action=="update" ? 'required' : [
+            "value" => $action=="update" ? 'required' : [
                 "rules" => 'required|unique_fields[lists,name,value,{name},{value}]',
                 'errors' => [
-                    'unique_fields' => 'Value already exists for {value}',
+                    'unique_fields' => "Value {value} already exists in {$name}"
                 ],
             ],
-            "value" => "required",
+            "name" => "required",
             "label" => "required"
         ];
     }

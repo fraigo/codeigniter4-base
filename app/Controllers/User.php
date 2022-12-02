@@ -31,7 +31,7 @@ class User extends BaseResourceController
         }
     }
 
-    protected function actionRules($action){
+    protected function actionRules($action, $data=null){
         $rules = [
             'name' => 'required',
             'email'    => 'required|valid_email',

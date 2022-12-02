@@ -86,7 +86,7 @@ class BaseResourceController extends ResourceController
         return [];
     }
 
-    protected function actionRules($action){
+    protected function actionRules($action, $data=null){
         return [];
     }
 
@@ -117,7 +117,7 @@ class BaseResourceController extends ResourceController
         }
         $this->addAllowedFields("create");
         $request = $this->request->getJSON(true);
-        $rules = $this->actionRules("create");
+        $rules = $this->actionRules("create", $request);
         $errors = $this->validateWithRules($request,$rules);
         if ($errors){
             return $this->error($errors);
@@ -141,7 +141,7 @@ class BaseResourceController extends ResourceController
         }
         $request = $this->request->getJSON(true);
         $this->addAllowedFields("update");
-        $rules = $this->actionRules("update");
+        $rules = $this->actionRules("update", $request);
         $errors = $this->validateWithRules($request,$rules);
         if ($errors){
             return $this->error($errors);
