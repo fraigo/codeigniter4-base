@@ -4,7 +4,7 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class User extends Model
+class User extends BaseModel
 {
     protected $DBGroup          = 'default';
     protected $table            = 'user';
@@ -40,7 +40,4 @@ class User extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    function addAllowedFields($fields=[]){
-        $this->allowedFields = array_merge($this->allowedFields,$fields);
-    }
 }
