@@ -4,7 +4,7 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class Lists extends Model
+class Lists extends BaseModel
 {
     protected $DBGroup          = 'default';
     protected $table            = 'lists';

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class UserOption extends Model
+class UserOption extends BaseModel
 {
     protected $DBGroup          = 'default';
     protected $table            = 'user_option';
