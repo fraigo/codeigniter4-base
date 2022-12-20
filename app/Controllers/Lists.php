@@ -13,8 +13,8 @@ class Lists extends BaseResourceController
 
         $name = @$data["name"];
         return [
-            "value" => $action=="update" ? 'required' : [
-                "rules" => 'required|unique_fields[lists,name,value,{name},{value}]',
+            "value" => [
+                "rules" => 'required|unique_fields[lists,name,value]',
                 'errors' => [
                     'unique_fields' => "Value {value} already exists in {$name}"
                 ],
