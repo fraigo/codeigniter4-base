@@ -106,7 +106,7 @@ class BaseResourceController extends ResourceController
     public function show($id = null){
         $item = $this->getById($id);
         if (!$item){
-            return $this->error(["Not found"]);
+            return $this->error(["Not found"],404);
         }
         return $this->result($item);
     }
@@ -137,7 +137,7 @@ class BaseResourceController extends ResourceController
         }
         $item = $this->getById($id);
         if (!$item){
-            return $this->error(["Not found"]);
+            return $this->error(["Not found"], 404);
         }
         $request = $this->request->getJSON(true);
         $this->addAllowedFields("update");
@@ -159,7 +159,7 @@ class BaseResourceController extends ResourceController
         }
         $item = $this->getById($id);
         if (!$item){
-            return $this->error(["Not found"]);
+            return $this->error(["Not found"], 404);
         }
         $result = $this->model->delete($id);
         return $this->result([

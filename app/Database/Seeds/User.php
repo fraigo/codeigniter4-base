@@ -20,6 +20,13 @@ class User extends Seeder
             'is_admin' => 1
         ];
         $this->db->table('user')->insert($data);
+        $userOpt = [
+            "user_id" => 1001, 
+            "name" => 'Language', 
+            "type" => 'select', 
+            "value" => 'en'
+        ];
+        $this->db->table('user_option')->insert($userOpt);
         $data = [
             'id' => 1002,
             'name' => 'User',
@@ -28,5 +35,12 @@ class User extends Seeder
             'is_admin' => 0
         ];
         $this->db->table('user')->insert($data);
+        $userOpt = [
+            "user_id" => 1002, 
+            "name" => 'Language', 
+            "type" => 'select', 
+            "value" => 'en'
+        ];
+        $this->db->table('user_option')->insert($userOpt);
     }
 }
